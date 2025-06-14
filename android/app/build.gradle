@@ -21,7 +21,7 @@ android {
 
     compileSdkVersion 34   // ✅ تم التحديث إلى SDK 35
 
-    ndkVersion flutter.ndkVersion
+    ndkVersion "25.1.8937393"
 
     defaultConfig {
         applicationId "com.example.final_senior_project"

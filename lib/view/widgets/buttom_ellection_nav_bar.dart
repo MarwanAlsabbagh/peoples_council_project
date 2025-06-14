@@ -5,6 +5,7 @@ import '../screen/ellection_view/home_page.dart';
 import '../screen/ellection_view/members_page.dart';
 import '../screen/ellection_view/parties_page.dart';
 import '../screen/ellection_view/voting_page.dart';
+import '../screen/settings/setting_page.dart';
 
 
 class BottomEllectionNavBar
@@ -23,8 +24,7 @@ class _BottomEllectionNavBarState extends State<BottomEllectionNavBar> {
     VotingPage(),
     MembersPage(),
     PartiesPage(),
-    SettingsPage(),
-  ];
+    SettingPage()  ];
 
   final List<String> titles = [
     'الرئيسية',
@@ -97,11 +97,6 @@ class _BottomEllectionNavBarState extends State<BottomEllectionNavBar> {
   }
 }
 
-class SettingsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة الإعدادات", style: TextStyle(fontSize: 24)));
-  }
-}
+
 
 

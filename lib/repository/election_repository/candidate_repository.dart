@@ -11,27 +11,8 @@ class CandidateRepository extends GetxService {
       data: {'id': id},
     );
 
-    final List data = response.data as List;
+    final Map<String, dynamic> data = response.data;
 
-    if (data.isNotEmpty) {
-      return CandidateModel.fromJson(data.first);
-    } else {
-      throw Exception('لم يتم العثور على بيانات المرشح');
-    }
+    return CandidateModel.fromJson(data);
   }
-
-// 🟡 سيتم تفعيل هذا لاحقًا بعد دعم الـ Backend لحقل is_followed
-/*
-  Future<void> updateFollowStatus(int candidateId, bool isFollowed) async {
-    try {
-      final response = await apiService.put(
-        '/candinate_info/$candidateId',
-        data: {'is_followed': isFollowed},
-      );
-      print('Status updated successfully: ${response.data}');
-    } catch (e) {
-      throw Exception('فشل في تحديث حالة المتابعة: $e');
-    }
-  }
-  */
 }

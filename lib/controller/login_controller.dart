@@ -1,3 +1,4 @@
+import 'package:final_senior_project/view/screen/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -36,8 +37,10 @@ class LoginController extends GetxController {
 
         if (role == 'CandidateDetail') {
           Get.offAll(() => DebutyBottomNavigationBar());
-        } else if (role == 'User') {
-          Get.offAll(() => UserBottomNavigationBar());
+        } else if (role == 'Citizen') {
+
+          //Get.offAll(() => UserBottomNavigationBar());
+          Get.offAll(() => BottomEllectionNavBar());
         } else {
           Get.snackbar("Error", "Unknown role", snackPosition: SnackPosition.BOTTOM);
         }
@@ -52,6 +55,21 @@ class LoginController extends GetxController {
 
     isLoading.value = false;
   }
+
+  Future<void> logout() async {
+    try {
+      bool success = await authRepository.logout();
+      if (success) {
+        Get.offAll(LoginPage());
+        Get.snackbar("Success", "Logout successful", snackPosition: SnackPosition.BOTTOM);
+      } else {
+        Get.snackbar("Error", "Logout failed", snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
   @override
   void onClose() {
     emailController.dispose();

@@ -1,13 +1,10 @@
 import 'package:get/get.dart';
-
 import '../../models/deputy_model/post_view_model.dart';
 import '../../models/deputy_model/story_model.dart';
 import '../../repository/deputy_repository/deputy_home_repository.dart';
 
 class DeputyHomeController extends GetxController {
-  final DeputyHomeRepository repository;
-
-  DeputyHomeController({required this.repository});
+  final DeputyHomeRepository repository = Get.find<DeputyHomeRepository>();
 
   var stories = <StoryModel>[].obs;
   var posts = <PostViewModel>[].obs;
@@ -18,29 +15,32 @@ class DeputyHomeController extends GetxController {
     super.onInit();
     loadData();
   }
+  void addNewPost(PostViewModel newPost) {
+    posts.insert(0, newPost);
+  }
 
   Future<void> loadData() async {
     try {
       isLoading.value = true;
-      final fetchedStories = await repository.fetchStories();
-      final fetchedPosts = await repository.fetchPosts();
+      final results = await Future.wait([
+        repository.fetchStories(),
+        repository.fetchPosts(),
+      ]);
 
-      stories.assignAll(fetchedStories);
-      posts.assignAll(fetchedPosts);
+      stories.assignAll(results[0] as List<StoryModel>);
+      posts.assignAll(results[1] as List<PostViewModel>);
+
+      print('✅ Fetched ${stories.length} stories & ${posts.length} posts');
     } catch (e) {
-      print('Error loading data: $e');
+      print('❌ Error loading data: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> addNewStory(String mediaPath, String mediaType) async {
-    try {
-      await repository.addStory(mediaPath, mediaType);
-      await loadData(); 
-    } catch (e) {
-      print('Error adding story: $e');
-    }
+  Future<void> addNewStory(String mediaPath, String? content) async {
+    await repository.addStory(mediaPath, content);
+    await loadData();
   }
 
   void markStoryAsViewed(StoryModel story) {

@@ -1,36 +1,51 @@
-import 'package:final_senior_project/models/deputy_model/story_media_model.dart';
-
 class StoryModel {
-  final String name;
-  final String image;
-  final List<StoryMediaModel> mediaList;
+  final int id;
+  final String content;
+  final String mediaType;
+  final String mediaPath; // فقط المسار النسبي هنا
+  final DateTime expiresAt;
+  final bool isExpired;
+  final String ownerName;
+  final String ownerImage;
   bool isViewed;
 
   StoryModel({
-    required this.name,
-    required this.image,
-    required this.mediaList,
+    required this.id,
+    required this.content,
+    required this.mediaType,
+    required this.mediaPath,
+    required this.expiresAt,
+    required this.isExpired,
+    required this.ownerName,
+    required this.ownerImage,
     this.isViewed = false,
   });
 
   factory StoryModel.fromJson(Map<String, dynamic> json) {
     return StoryModel(
-      name: json['name'],
-      image: json['image'],
-      mediaList: (json['mediaList'] as List)
-          .map((e) => StoryMediaModel.fromJson(e))
-          .toList(),
-      isViewed: json['isViewed'] ?? false,
+      id: json['id'] ?? 0,
+      content: json['content'] ?? '',
+      mediaType: (json['media_type'] as String?)?.toLowerCase() ?? 'text',
+      mediaPath: json['media_path'] ?? '',
+      expiresAt: DateTime.tryParse(json['expires_at'] ?? '') ?? DateTime.now().add(const Duration(hours: 24)),
+      isExpired: json['is_expired'] ?? false,
+      ownerName: (json['owner_name'] ?? 'مستخدم').toString().replaceAll('"', ''),
+      ownerImage: json['owner_image'] ?? '',
+      isViewed: false,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'image': image,
-    'mediaList': mediaList.map((e) => e.toJson()).toList(),
-    'isViewed': isViewed,
-  };
-
-  String get mediaUrl => mediaList.isNotEmpty ? mediaList.first.url : image;
-  String get userName => name;
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'content': content,
+      'media_type': mediaType,
+      'media_path': mediaPath,
+      'expires_at': expiresAt.toIso8601String(),
+      'is_expired': isExpired,
+      'owner_name': ownerName,
+      'owner_image': ownerImage,
+      'is_viewed': isViewed,
+    };
+  }
 }

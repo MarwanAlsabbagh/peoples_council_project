@@ -1,6 +1,10 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
+
+import '../../utils/globall_color.dart';
 
 class ImageGenericWidget extends StatelessWidget {
   final String label;
@@ -17,23 +21,22 @@ class ImageGenericWidget extends StatelessWidget {
   Future<void> _pickImage(BuildContext context) async {
     final picker = ImagePicker();
 
-    // عرض حوار لاختيار بين الكاميرا والمعرض
     final selectedSource = await showDialog<ImageSource>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('اختر مصدر الصورة'),
+          title: Text(easy.tr('choose_image_source')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('التقاط صورة من الكاميرا'),
+                title:  Text(easy.tr('take_photo')),
                 onTap: () => Navigator.of(context).pop(ImageSource.camera),
               ),
               ListTile(
                 leading: const Icon(Icons.photo_album),
-                title: const Text('اختيار صورة من المعرض'),
+                title:  Text(easy.tr('from_gallery')),
                 onTap: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
             ],
@@ -42,11 +45,31 @@ class ImageGenericWidget extends StatelessWidget {
       },
     );
 
-    // إذا اختار المستخدم مصدرًا، التقط الصورة
     if (selectedSource != null) {
-      final pickedFile = await picker.pickImage(source: selectedSource);
-      if (pickedFile != null) {
-        onPick(pickedFile); // إعادة الصورة المختارة إلى الـ onPick
+      try {
+        final pickedFile = await picker.pickImage(
+          source: selectedSource,
+          imageQuality: 85,
+        );
+
+        if (pickedFile != null) {
+          final file = File(pickedFile.path);
+
+          if (await file.exists()) {
+            debugPrint("✅ تم اختيار صورة: ${pickedFile.path}");
+            onPick(pickedFile);
+          } else {
+            debugPrint("⚠️ لم يتم العثور على الملف بعد اختياره");
+            ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(content: Text(easy.tr('image_load_error'))),
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint("⚠️ خطأ في اختيار الصورة: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text(easy.tr('image_pick_error'))),
+        );
       }
     }
   }
@@ -56,20 +79,34 @@ class ImageGenericWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(label,
+            style:TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color:Color(0xff2E8F5A),
+            )),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => _pickImage(context), // تمرير context هنا
+          onTap: () => _pickImage(context),
           child: Container(
             width: 120,
             height: 120,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10),
+              shape: BoxShape.circle,
             ),
             child: image == null
-                ? const Icon(Icons.camera_alt_outlined)
-                : Image.file(File(image!.path), fit: BoxFit.cover),
+                ? const Icon(Icons.photo_album_sharp,
+                size: 30, color: Color((0xff2E8F5A)))
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      File(image!.path),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.broken_image),
+                    ),
+                  ),
           ),
         )
       ],

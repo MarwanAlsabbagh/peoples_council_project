@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../utils/media_utils.dart';
+
 class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-  const VideoPlayerWidget({super.key, required this.videoUrl});
+  final String videoRelativePath;
+  const VideoPlayerWidget({super.key, required this.videoRelativePath});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -17,9 +19,16 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void initState() {
     super.initState();
 
+    final fullVideoUrl =widget.videoRelativePath;
+
     _controller = VideoPlayerController.networkUrl(
-      Uri.parse(widget.videoUrl),
+      Uri.parse(fullVideoUrl),
     );
+    /*_controller = VideoPlayerController.networkUrl(
+      Uri.parse('http://192.168.130.213:8000/storage/videos/mSwcQ2zmN46yu0d66AbpkDc1Te7LCjARqlSCIcbC.mp4'),
+    );*/
+
+
 
     _initializeVideoPlayerFuture = _controller.initialize().then((_) {
       setState(() {});
@@ -70,7 +79,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                             ? Icons.pause
                             : Icons.play_arrow,
                         size: 40,
-                        color: Color(0xff2E8F5A),
+                        color: const Color(0xff2E8F5A),
                       ),
                     ),
                   ),

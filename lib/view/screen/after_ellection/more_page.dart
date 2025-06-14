@@ -2,6 +2,7 @@ import 'package:final_senior_project/view/screen/after_ellection/parliamentary_s
 import 'package:final_senior_project/view/screen/after_ellection/syrian_constitution.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_container.dart';
@@ -66,8 +67,8 @@ class MorePage extends StatelessWidget {
                     height: 80,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'سوريا نحو مستقبل افضل',
+                   Text(
+                    easy.tr('syria_towards_better_future'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -80,7 +81,7 @@ class MorePage extends StatelessWidget {
             ),
           ),
               SizedBox(height: 5,),
-              Text("كل ماتحتاج معرفته :",
+              Text(easy.tr("everything_you_need_to_know"),
                 style:TextStyle(
                   color: Color(0xff2E8F5A),
                   fontSize: 18,
@@ -90,29 +91,23 @@ class MorePage extends StatelessWidget {
               Expanded(
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // عدد الأعمدة
-                    crossAxisSpacing: 10, // المسافة بين الأعمدة
-                    mainAxisSpacing: 10, // المسافة بين الصفوف
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                   ),
-                  itemCount: items.length, // عدد العناصر
+                  itemCount: items.length,
                   itemBuilder: (context, index) {
-                    // استدعاء CustomContainer وتمرير البيانات
                     return CustomContainer(
                       imagePath: items[index]['image']!,
                       text: items[index]['text']!,
                       onTap: () {
-                        // تغيير الصفحة بناءً على قيمة الـ 'page'
                         if (items[index]['page'] == 'ParliamentarySystemsPage') {
-                          // الانتقال إلى صفحة الأنظمة البرلمانية
                           Navigator.push(context, MaterialPageRoute(builder: (_) => ParliamentarySystemsPage()));
                         } else if (items[index]['page'] == 'BookPage') {
-                          // الانتقال إلى صفحة الكتب
                           Navigator.push(context, MaterialPageRoute(builder: (_) => BookPage()));
                         } else if (items[index]['page'] == 'ArticlesAndResearchPage') {
-                          // الانتقال إلى صفحة المقالات والأبحاث
                           Navigator.push(context, MaterialPageRoute(builder: (_) => ArticlesAndResearchPage()));
                         } else if (items[index]['page'] == 'SyrianConstitutionPage') {
-                          // الانتقال إلى صفحة الدستور السوري
                           Navigator.push(context, MaterialPageRoute(builder: (_) => SyrianConstitutionPage()));
                         }
                       },

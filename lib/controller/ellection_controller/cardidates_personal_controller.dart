@@ -3,10 +3,12 @@ import '../../models/ellection_model/candidate_model.dart';
 import '../../repository/election_repository/candidate_repository.dart';
 
 class CandidatesController extends GetxController {
-  var candidate = Rx<CandidateModel?>(null);
-  final int id;
+  var candidate = Rxn<CandidateModel>();
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
 
-  CandidateRepository candidateRepository = Get.find<CandidateRepository>();
+  final int id;
+  final CandidateRepository candidateRepository = Get.find<CandidateRepository>();
 
   CandidatesController({required this.id});
 
@@ -17,10 +19,17 @@ class CandidatesController extends GetxController {
   }
 
   Future<void> fetchCandidate(int id) async {
-    candidate.value = await candidateRepository.fetchCandidate(id);
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      candidate.value = await candidateRepository.fetchCandidate(id);
+    } catch (e) {
+      errorMessage.value = e.toString();
+      candidate.value = null;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  RxString selectedButton = 'حول المرشح'.obs;
-
-
+  RxString selectedButton = 'about_candidate'.obs;
 }

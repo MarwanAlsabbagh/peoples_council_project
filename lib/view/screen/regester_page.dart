@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 import '../../controller/register_controller.dart';
 import '../../utils/globall_color.dart';
@@ -38,7 +39,7 @@ class RegisterPage extends StatelessWidget {
                   padding:
                   const EdgeInsets.only(bottom: 30, left: 16, right: 16),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 25),
                       Column(
@@ -70,7 +71,7 @@ class RegisterPage extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "ابدأ بانشاء حسابك الآن",
+                          easy.tr('register_title'),
                           style: TextStyle(
                             fontSize: 18,
                             color: GlobalColors.secondTextColor,
@@ -81,62 +82,141 @@ class RegisterPage extends StatelessWidget {
                       SizedBox(height: 20),
 
                       Obx(() => ImageGenericWidget(
-                        label: "الصورة الشخصية",
+                        label:  easy.tr("register_avatar_label"),
                         image: controller.avatar.value,
                         onPick: (xfile) => controller.avatar.value = xfile,
                       )),
                       SizedBox(height: 20),
-
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr("register_firstname_hint"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       TextFieldWidget(
                         controller: controller.firstNameController,
-                        hintText: 'مروان الصباغ',
+                        hintText:  easy.tr('register_firstname_hint'),
                         prefixIcon: Icons.perm_identity,
                         keyboardType: TextInputType.name,
                       ),
                       SizedBox(height: 15),
 
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr("register_email_hint1"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       TextFieldWidget(
                         controller: controller.emailController,
-                        hintText: 'marwan@gmail.com',
+                        hintText: easy.tr('register_email_hint'),
                         prefixIcon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 15),
-
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr("register_national_id_hint1"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       TextFieldWidget(
                         controller: controller.nationalIDController,
-                        hintText: '303011111',
+                        hintText:  easy.tr('register_national_id_hint'),
                         prefixIcon: Icons.perm_identity,
                         keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 15),
-
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr("register_phone_hint1"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       TextFieldWidget(
                         controller: controller.phoneController,
-                        hintText: '0943971457',
+                        hintText:  easy.tr('register_phone_hint'),
                         prefixIcon: Icons.phone_android,
                         keyboardType: TextInputType.phone,
                       ),
                       SizedBox(height: 15),
-
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr("register_password_hint1"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       TextFieldWidget(
                         controller: controller.passwordController,
-                        hintText: '******',
+                        hintText:  easy.tr('register_password_hint'),
                         prefixIcon: Icons.lock_clock_outlined,
                         obscureText: true,
                       ),
                       SizedBox(height: 15),
-
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr("register_password_hint1"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       TextFieldWidget(
                         controller: controller.confirmPasswordController,
-                        hintText: '******',
+                        hintText:  easy.tr('register_password_hint'),
                         prefixIcon: Icons.lock_clock_outlined,
                         obscureText: true,
                       ),
                       SizedBox(height: 15),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr('register_city_hint1'),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
 
+                      SizedBox(height: 5),
                       Obx(() => DropdownWidget(
-                        hintText: "دمشق",
+                        hintText:  easy.tr("register_city_hint"),
                         items: [
                           "دمشق",
                           "حلب",
@@ -158,17 +238,39 @@ class RegisterPage extends StatelessWidget {
                         prefixIcon: Icons.location_city,
                       )),
                       SizedBox(height: 15),
-
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          easy.tr("register_location_hint1"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       TextFieldWidget(
                         controller: controller.locationCityController,
-                        hintText: 'المزرعة,ساحة الشهبندر',
+                        hintText:  easy.tr('register_location_hint'),
                         prefixIcon: Icons.location_city,
                         keyboardType: TextInputType.text,
                       ),
                       SizedBox(height: 15),
-
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                            easy.tr("register_gender_hint1"),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: GlobalColors.secondTextColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       Obx(() => DropdownWidget(
-                        hintText: "ذكر",
+                        hintText:  easy.tr("register_gender_hint"),
                         items: ["ذكر", "أنثى"],
                         selectedValue: controller.selectedGender.value,
                         onChanged: (newValue) {
@@ -178,39 +280,43 @@ class RegisterPage extends StatelessWidget {
                       )),
 
                       SizedBox(height: 20),
-                      Align(
+                      /*Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "حمل صور الهوية الشخصية :",
+                          easy.tr("register_front_id_label"),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: GlobalColors.secondTextColor,
                           ),
                         ),
-                      ),
+                      ),*/
                       SizedBox(height: 10),
 
                       Obx(() => ImageGenericWidget(
-                        label: "الصورة الأمامية",
+                        label:  easy.tr("register_front_id_label"),
                         image: controller.frontId.value,
                         onPick: (xfile) => controller.frontId.value = xfile,
                       )),
                       SizedBox(height: 15),
 
                       Obx(() => ImageGenericWidget(
-                        label: "الصورة الخلفية",
+                        label:  easy.tr("register_back_id_label"),
                         image: controller.backId.value,
                         onPick: (xfile) => controller.backId.value = xfile,
                       )),
                       SizedBox(height: 20),
 
-                      ButtonWidget(
-                        text: 'تسجيل',
-                        onPressed: () {
-                          controller.register();
-                        },
-                      ),
+                      Obx(() {
+                        return controller.isLoading.value
+                            ? CircularProgressIndicator()
+                            : ButtonWidget(
+                          text: easy.tr('register_button'),
+                          onPressed: () {
+                            controller.register();
+                          },
+                        );
+                      }),
                     ],
                   ),
                 ),

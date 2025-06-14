@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../screen/after_ellection/chat_bot.dart';
 import '../screen/after_ellection/more_page.dart';
+import '../screen/classification_page/classification_view.dart';
+import '../screen/deputy_pages/deputy_home_page.dart';
+import '../screen/settings/setting_page.dart';
 
 
 class UserBottomNavigationBar extends StatefulWidget {
@@ -14,11 +18,11 @@ class _UserBottomNavigationBarState extends State<UserBottomNavigationBar> {
   int selectedIndex = 0;
 
   final List<Widget> pages = [
-    HomePage(),
+    DeputyHomePage(),
     MajlisPage(),
-    ChatBotPage(),
-    AskYourMPPage(),
-    SettingsPage(),
+    ChatPage(),
+    ClassificationPage(),
+    SettingPage(),
     MorePage(),
   ];
 
@@ -26,7 +30,7 @@ class _UserBottomNavigationBarState extends State<UserBottomNavigationBar> {
     'الرئيسية',
     'المجلس',
     'شات بوت',
-    'اسأل نائبك',
+    'القضاية',
     'الإعدادات',
     'المزيد'
   ];
@@ -95,12 +99,6 @@ class _UserBottomNavigationBarState extends State<UserBottomNavigationBar> {
   }
 }
 
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة الرئيسية", style: TextStyle(fontSize: 40)));
-  }
-}
 
 class MajlisPage extends StatelessWidget {
   @override
@@ -109,25 +107,7 @@ class MajlisPage extends StatelessWidget {
   }
 }
 
-class ChatBotPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة شات بوت", style: TextStyle(fontSize: 24)));
-  }
-}
 
-class AskYourMPPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة اسأل نائبك", style: TextStyle(fontSize: 24)));
-  }
-}
 
-class SettingsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة الإعدادات", style: TextStyle(fontSize: 24)));
-  }
-}
 
 

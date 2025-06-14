@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:story_view/controller/story_controller.dart';
-import 'package:story_view/utils.dart';
-import 'package:story_view/widgets/story_view.dart';
-
+import 'package:story_view/story_view.dart';
 import '../../models/deputy_model/story_model.dart';
 
+String getFullMediaUrl(String path) {
+  const String baseUrl = 'http://192.168.130.213:8000';
+  if (path.isEmpty) return '';
+  if (path.startsWith('http')) return path;
+  return baseUrl + path;
+}
 
 class StoryViewer extends StatefulWidget {
   final List<StoryModel> stories;
@@ -34,23 +37,34 @@ class _StoryViewerState extends State<StoryViewer> {
   }
 
   List<StoryItem> _buildStoryItems(StoryModel story) {
-    return story.mediaList.map((media) {
-      if (media.type == 'image') {
-        return StoryItem.pageImage(
-          url: media.url,
+    if (story.mediaType == 'image' && story.mediaPath.isNotEmpty) {
+      return [
+        StoryItem.pageImage(
+          url: getFullMediaUrl("/storage/"+story.mediaPath),
           controller: storyController,
           imageFit: BoxFit.cover,
           duration: const Duration(seconds: 5),
-        );
-      } else {
-        return StoryItem.pageVideo(
-          media.url,
+        ),
+      ];
+    } else if (story.mediaType == 'video' && story.mediaPath.isNotEmpty) {
+      return [
+        StoryItem.pageVideo(
+          getFullMediaUrl("/storage/"+story.mediaPath),
           controller: storyController,
           imageFit: BoxFit.cover,
           duration: const Duration(seconds: 10),
-        );
-      }
-    }).toList();
+        ),
+      ];
+    } else {
+      return [
+        StoryItem.text(
+          title: story.content.isNotEmpty ? story.content : 'لا يوجد محتوى',
+          backgroundColor: Colors.black,
+          textStyle: const TextStyle(color: Colors.white, fontSize: 24),
+          duration: const Duration(seconds: 5),
+        ),
+      ];
+    }
   }
 
   void _goToNextUserStory() {
@@ -137,11 +151,13 @@ class _StoryViewerState extends State<StoryViewer> {
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundImage: NetworkImage(currentStory.image),
+                      backgroundImage: NetworkImage(
+                        getFullMediaUrl(currentStory.ownerImage),
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      currentStory.name,
+                      currentStory.ownerName,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

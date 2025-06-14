@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
+import 'package:get_storage/get_storage.dart'; // ⬅️ تم إضافتها لقراءة role من التخزين
 
 import '../../../controller/deputy_controller/deputy_home_controller.dart';
-import '../../../models/deputy_model/story_model.dart';
 import '../../widgets/add_story_circle.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/post_widget.dart';
@@ -15,25 +16,33 @@ class DeputyHomePage extends StatelessWidget {
 
   final DeputyHomeController controller = Get.find();
 
+  final String? role = GetStorage().read('role');
+
   Future<void> _addNewStory(BuildContext context) async {
     final picker = ImagePicker();
-    final media = await showDialog<String>(
+
+    final mediaType = await showDialog<String>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('إضافة Story'),
+          title: Text(easy.tr('choose_story_type')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.photo),
-                title: const Text('صورة'),
+                title: Text(easy.tr('story_type_image')),
                 onTap: () => Navigator.pop(context, 'image'),
               ),
               ListTile(
                 leading: const Icon(Icons.videocam),
-                title: const Text('فيديو'),
+                title: Text(easy.tr('story_type_video')),
                 onTap: () => Navigator.pop(context, 'video'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.text_fields),
+                title: Text(easy.tr('story_type_text')),
+                onTap: () => Navigator.pop(context, 'text'),
               ),
             ],
           ),
@@ -41,17 +50,76 @@ class DeputyHomePage extends StatelessWidget {
       },
     );
 
-    if (media == 'image') {
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        await controller.addNewStory(pickedFile.path, 'image');
-      }
-    } else if (media == 'video') {
-      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        await controller.addNewStory(pickedFile.path, 'video');
-      }
+    if (mediaType == null) return;
+
+    String? mediaPath;
+
+    if (mediaType == 'image' || mediaType == 'video') {
+      final source = await showDialog<ImageSource>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(easy.tr('choose_source')),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: Text(easy.tr('source_camera')),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: Text(easy.tr('source_gallery')),
+                  onTap: () => Navigator.pop(context, ImageSource.gallery),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      if (source == null) return;
+
+      final pickedFile = mediaType == 'image'
+          ? await picker.pickImage(source: source)
+          : await picker.pickVideo(source: source);
+
+      if (pickedFile == null) return;
+
+      mediaPath = pickedFile.path;
     }
+
+    final content = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController();
+        return AlertDialog(
+          title: Text(easy.tr('enter_optional_text')),
+          content: TextField(
+            controller: controller,
+            maxLines: 3,
+            decoration: InputDecoration(hintText: easy.tr('story_text_hint')),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: Text(easy.tr('skip')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, controller.text.trim()),
+              child: Text(easy.tr('done')),
+            ),
+          ],
+        );
+      },
+    );
+
+    if ((mediaPath == null || mediaPath.isEmpty) && (content == null || content.isEmpty)) {
+      return;
+    }
+
+    await controller.addNewStory(mediaPath ?? '', content);
   }
 
   @override
@@ -73,17 +141,18 @@ class DeputyHomePage extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               children: [
-                // 🟠 قصص
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                     child: Row(
                       children: [
-                        AddStoryCircle(
-                          onTap: () => _addNewStory(context),
-                        ),
-                        const SizedBox(width: 10),
+                        if (role == 'CandidateDetail') ...[
+                          AddStoryCircle(
+                            onTap: () => _addNewStory(context),
+                          ),
+                          const SizedBox(width: 10),
+                        ],
                         ...sortedStories.map((story) {
                           return GestureDetector(
                             onTap: () async {
@@ -101,8 +170,8 @@ class DeputyHomePage extends StatelessWidget {
                               }
                             },
                             child: StoryCircle(
-                              imagePath: story.mediaUrl,
-                              userName: story.userName,
+                              imagePath: story.ownerImage,
+                              userName: story.ownerName,
                               isViewed: story.isViewed,
                             ),
                           );
@@ -115,7 +184,6 @@ class DeputyHomePage extends StatelessWidget {
                 Column(
                   children: controller.posts.map((post) {
                     return PostWidget(post: post);
-
                   }).toList(),
                 ),
               ],

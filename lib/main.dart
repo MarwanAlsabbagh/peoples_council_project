@@ -1,9 +1,10 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:final_senior_project/service/notification_service.dart';
 import 'package:final_senior_project/view/screen/after_ellection/chat_bot.dart';
 import 'package:final_senior_project/view/screen/after_ellection/council_page.dart';
-import 'package:final_senior_project/view/screen/after_ellection/deputy_personal_page.dart';
 import 'package:final_senior_project/view/screen/after_ellection/more_page.dart';
+import 'package:final_senior_project/view/screen/classification_page/classification_view.dart';
 import 'package:final_senior_project/view/screen/create_new_password_page.dart';
 import 'package:final_senior_project/view/screen/deputy_pages/add_post_screen.dart';
 import 'package:final_senior_project/view/screen/deputy_pages/deputy_home_page.dart';
@@ -16,6 +17,8 @@ import 'package:final_senior_project/view/screen/ellection_view/voting_page.dart
 import 'package:final_senior_project/view/screen/login_page.dart';
 import 'package:final_senior_project/view/screen/notification_page.dart';
 import 'package:final_senior_project/view/screen/regester_page.dart';
+import 'package:final_senior_project/view/screen/settings/privacy_policy_page.dart';
+import 'package:final_senior_project/view/screen/settings/setting_page.dart';
 import 'package:final_senior_project/view/widgets/bottom-navigation_bar.dart';
 import 'package:final_senior_project/view/widgets/buttom_ellection_nav_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,7 +36,17 @@ void main()async {
   );
   await NotificationService.initialize();
   await GetStorage.init();
-  runApp(const MyApp());
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('ar'), Locale('en')],
+      path: 'assets/lang',
+      fallbackLocale: const Locale('ar'),
+      startLocale: const Locale('ar'),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -48,8 +61,12 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/login',
-          page: () => ChatPage(),
+          page: () => LoginPage(),
         ),
-      ],    );
+      ],
+      locale: context.locale,
+      supportedLocales: context.supportedLocales,
+      localizationsDelegates: context.localizationDelegates,
+    );
   }
 }

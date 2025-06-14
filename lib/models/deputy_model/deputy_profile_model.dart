@@ -1,5 +1,6 @@
 import 'package:final_senior_project/models/deputy_model/party_model.dart';
 import 'package:final_senior_project/models/deputy_model/post_view_model.dart';
+import 'package:final_senior_project/models/deputy_model/profile_post_model.dart';
 
 class DeputyProfileModel {
   final int id;
@@ -14,7 +15,7 @@ class DeputyProfileModel {
   final String academicDegree;
   final String electoralProgram;
   final PartyModel party;
-  final List<PostViewModel> posts;
+  final List<ProfilePostModel> posts;
   final int postsCount;
   final int totalLikes;
   final int totalDislikes;
@@ -52,7 +53,9 @@ class DeputyProfileModel {
       academicDegree: json['detail']['academic_degree'] ?? '',
       electoralProgram: json['detail']['electoral_program'] ?? '',
       party: PartyModel.fromJson(json['party']),
-      posts: (json['posts'] as List).map((p) => PostViewModel.fromJson(p)).toList(),
+      posts: (json['posts'] as List)
+          .map((p) => ProfilePostModel.fromJson(p))
+          .toList(),
       postsCount: json['posts_count'] ?? 0,
       totalLikes: json['total_likes'] ?? 0,
       totalDislikes: json['total_dislikes'] ?? 0,
@@ -93,7 +96,7 @@ class DeputyProfileModel {
     String? academicDegree,
     String? electoralProgram,
     PartyModel? party,
-    List<PostViewModel>? posts,
+    List<ProfilePostModel>? posts,
     int? postsCount,
     int? totalLikes,
     int? totalDislikes,

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 import '../../../controller/deputy_controller/post_controller.dart';
 import '../../../utils/globall_color.dart';
@@ -18,7 +19,7 @@ class AddPostScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('إنشاء منشور', style: TextStyle(color: Colors.white)),
+        title:  Text(easy.tr('create_post'), style: TextStyle(color: Colors.white)),
         backgroundColor: GlobalColors.mainColor,
         centerTitle: true,
       ),
@@ -48,15 +49,15 @@ class AddPostScreen extends StatelessWidget {
                         child: TextFormField(
                           maxLines: null,
                           onChanged: (val) => controller.content.value = val,
-                          decoration: const InputDecoration(
-                            hintText: 'بم تفكر؟',
+                          decoration:  InputDecoration(
+                            hintText: easy.tr('what_are_you_thinking'),
                             border: InputBorder.none,
                             isDense: true,
                           ),
                           validator: (val) {
                             if ((val == null || val.isEmpty) &&
                                 controller.pickedMedia.value == null) {
-                              return 'يرجى كتابة محتوى أو اختيار وسائط';
+                              return easy.tr('content_or_media_required');
                             }
                             return null;
                           },
@@ -73,7 +74,7 @@ class AddPostScreen extends StatelessWidget {
                   children: [
                     _mediaIcon(
                       icon: Icons.image,
-                      label: 'صورة',
+                      label: easy.tr('image'),
                       onTap: () async {
                         final source = await MediaPickerHelper.pickMediaSource(context, isVideo: false);
                         if (source != null) await controller.pickImage(source);
@@ -81,7 +82,7 @@ class AddPostScreen extends StatelessWidget {
                     ),
                     _mediaIcon(
                       icon: Icons.videocam,
-                      label: 'فيديو',
+                      label: easy.tr('video'),
                       onTap: () async {
                         final source = await MediaPickerHelper.pickMediaSource(context, isVideo: true);
                         if (source != null) await controller.pickVideo(source);
@@ -91,7 +92,7 @@ class AddPostScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 ButtonWidget(
-                  text: controller.isLoading.value ? 'جاري النشر...' : 'نشر',
+                  text: controller.isLoading.value ? easy.tr('posting') : easy.tr('post'),
                   onPressed: controller.isLoading.value ? null : controller.submitPost,
                 ),
               ],

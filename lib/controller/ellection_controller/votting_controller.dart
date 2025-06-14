@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import '../../models/ellection_model/votting_model.dart';
 import '../../repository/election_repository/voting_repository.dart';
@@ -44,7 +42,7 @@ class VotingController extends GetxController {
   }
 
   bool isCandidateSelected(Votting candidate) {
-    return selectedCandidate.value?.name == candidate.name;
+    return selectedCandidate.value?.candidateId == candidate.candidateId;
   }
 
   void selectCandidate(Votting candidate) {
@@ -60,8 +58,8 @@ class VotingController extends GetxController {
   }
 
   Future<bool> submitVote() async {
-    final name = selectedCandidate.value?.name;
-    if (name == null) return false;
-    return await repository.submitVote(name);
+    final id = selectedCandidate.value?.candidateId;
+    if (id == null) return false;
+    return await repository.submitVote(id);
   }
 }

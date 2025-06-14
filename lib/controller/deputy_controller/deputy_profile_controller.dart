@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
 import '../../models/deputy_model/deputy_profile_model.dart';
 import '../../models/deputy_model/post_view_model.dart';
+import '../../models/deputy_model/profile_post_model.dart';
 import '../../repository/deputy_repository/deputy_profile_repository.dart';
 
 class ProfileController extends GetxController {
   final user = DeputyProfileModel.empty().obs;
-  final posts = <PostViewModel>[].obs;
+  final posts = <ProfilePostModel>[].obs;
   final isLoading = false.obs;
   final isFollowing = false.obs;
 
@@ -21,21 +22,23 @@ class ProfileController extends GetxController {
     try {
       isLoading.value = true;
 
-      // هنا استدعاء الدالة الموحدة
+      print("👀 loadProfile: Before API call");
       final deputyProfile = await _repository.fetchDeputyProfile();
+      print("✅ loadProfile: After API call");
 
       user.value = deputyProfile;
-      posts.assignAll(deputyProfile.posts ?? []);
-     // isFollowing.value = deputyProfile.isFollowing ?? false;
+      posts.assignAll(deputyProfile.posts);
 
-    } catch (e) {
-      print("Error loading profile: $e");
+    } catch (e, stacktrace) {
+      print("❌ Error loading profile: $e");
+      print("❌ Stacktrace: $stacktrace");
     } finally {
       isLoading.value = false;
     }
   }
 
-  void addNewPost(PostViewModel post) {
+
+  void addNewPost(ProfilePostModel post) {
     posts.insert(0, post);
     user.update((val) {
       if (val != null) {
@@ -43,6 +46,7 @@ class ProfileController extends GetxController {
       }
     });
   }
+
 
 /* تابع المتابعة اذا تريده
   Future<void> toggleFollowStatus() async {

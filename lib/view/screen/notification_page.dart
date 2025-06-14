@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -11,11 +12,11 @@ class NotificationPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: const Text("الإشعارات")),
-
+          title:  Text(tr("notifications_title")),
+      ),
       body: Obx(() {
         if (controller.notifications.isEmpty) {
-          return const Center(child: Text("لا توجد إشعارات بعد"));
+          return  Center(child: Text(tr("notifications_empty")));
         }
 
         return ListView.separated(

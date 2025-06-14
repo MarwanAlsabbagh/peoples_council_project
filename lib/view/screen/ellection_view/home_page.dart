@@ -5,6 +5,7 @@ import '../../../controller/ellection_controller/home_page_controller.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/election_countdown.dart';
 import '../../widgets/election_result.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 class ElectionHomePage extends StatelessWidget {
   ElectionHomePage({super.key});
@@ -42,7 +43,7 @@ class ElectionHomePage extends StatelessWidget {
                     textAlign: TextAlign.right,
                     style: TextStyle(fontSize: 16),
                     decoration: InputDecoration(
-                      hintText: "ابحث عن ما تريد...",
+                      hintText: easy.tr("search_hint"),
                       prefixIcon: Icon(Icons.search, color: Colors.green),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
@@ -75,7 +76,7 @@ class ElectionHomePage extends StatelessWidget {
                       children: [
                         Align(
                           alignment: Alignment.centerRight,
-                          child: Text("نتائج الانتخابات الحالية :",
+                          child: Text(easy.tr("current_results_title"),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

@@ -1,11 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/media_utils.dart';
 
 class VotingCard extends StatelessWidget {
   final String name;
   final String? governorate;
   final String? category;
   final String? party;
-  final String imagePath;
+  final String? imagePath;
   final String? partyLogoPath;
   final bool isSelected;
   final void Function(bool selected) onSelected;
@@ -16,7 +19,7 @@ class VotingCard extends StatelessWidget {
     this.governorate,
     this.category,
     this.party,
-    required this.imagePath,
+    this.imagePath,
     this.partyLogoPath,
     required this.isSelected,
     required this.onSelected,
@@ -43,8 +46,8 @@ class VotingCard extends StatelessWidget {
             // صورة المرشح
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                imagePath,
+              child: Image.network(
+                getFullMediaUrl(imagePath),
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,
@@ -75,7 +78,8 @@ class VotingCard extends StatelessWidget {
                   if (party != null && partyLogoPath != null)
                     Row(
                       children: [
-                        Image.asset(partyLogoPath!, width: 20, height: 20),
+                        Image.network(getFullMediaUrl(partyLogoPath),
+                             width: 20, height: 20),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
@@ -90,7 +94,6 @@ class VotingCard extends StatelessWidget {
               ),
             ),
 
-            // مؤشر الاختيار ✅
             Icon(
               isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
               color: isSelected ? const Color(0xff2E8F5A) : Colors.grey,

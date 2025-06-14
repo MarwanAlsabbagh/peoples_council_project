@@ -1,7 +1,7 @@
 import 'package:final_senior_project/view/screen/ellection_view/parties_personal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:easy_localization/easy_localization.dart' as easy;
 import '../../../controller/ellection_controller/parties__controller.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/parties_card.dart';
@@ -40,7 +40,7 @@ class PartiesPage extends StatelessWidget {
                   textAlign: TextAlign.right,
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
-                    hintText: "ابحث عن الحزب...",
+                    hintText: easy.tr("search_hint"),
                     prefixIcon: const Icon(Icons.search, color: Colors.green),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.0),

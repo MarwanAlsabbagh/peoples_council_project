@@ -1,10 +1,20 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
+
+import '../../utils/media_utils.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final box = GetStorage();
+
+    final user = box.read('user');
+    String? imagePath = user != null ? user['image'] as String? : null;
+    String imageUrl = getFullMediaUrl(imagePath);
+
     return PreferredSize(
       preferredSize: const Size.fromHeight(120.0),
       child: Stack(
@@ -15,7 +25,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: Color(0xFF2E8F5A),
             ),
           ),
-
           Positioned(
             bottom: 0,
             left: 0,
@@ -26,7 +35,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               height: 120,
             ),
           ),
-
           Positioned(
             top: 40,
             left: 16,
@@ -45,18 +53,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Container(
                   height: 40,
                   width: 40,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: AssetImage("assets/images/1627f3a870e9b56d751d07f53392d7a84aa55817.jpg"),
+                      image: NetworkImage(imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 const Spacer(),
-                const Text(
-                  "مجلس الشعب السوري",
-                  style: TextStyle(
+                Text(
+                  "custom_appbar_title".tr(),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../screen/after_ellection/chat_bot.dart';
 import '../screen/after_ellection/more_page.dart';
+import '../screen/classification_page/classification_view.dart';
 import '../screen/deputy_pages/deputy_home_page.dart';
 import '../screen/deputy_pages/deputy_profile_page.dart';
+import '../screen/settings/setting_page.dart';
+import 'bottom-navigation_bar.dart';
 
 
 class DebutyBottomNavigationBar extends StatefulWidget {
@@ -17,25 +21,25 @@ class _DebutyBottomNavigationBarState extends State<DebutyBottomNavigationBar> {
 
   final List<Widget> pages = [
     DeputyHomePage(),
-    MajlisPage(),
-    ChatBotPage(),
+    ClassificationPage(),
+    ChatPage(),
     DeputyProfilePage(),
-    SettingsPage(),
+    SettingPage(),
     MorePage(),
   ];
 
   final List<String> titles = [
     'الرئيسية',
-    'المجلس',
+    'القضايا',
     'شات بوت',
-    'لصفحة الشخصية',
+    'البروفايل',
     'الإعدادات',
     'المزيد'
   ];
 
   final List<String> icons = [
     "assets/icons/Vector (5).png",
-    "assets/icons/Vector (6).png",
+    "assets/equality 1.png",
     "assets/icons/Layer_1.png",
     "assets/icons/question-square 1.png",
     "assets/icons/settings (4) 1.png",
@@ -97,12 +101,7 @@ class _DebutyBottomNavigationBarState extends State<DebutyBottomNavigationBar> {
   }
 }
 
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة الرئيسية", style: TextStyle(fontSize: 40)));
-  }
-}
+
 
 class MajlisPage extends StatelessWidget {
   @override
@@ -111,25 +110,10 @@ class MajlisPage extends StatelessWidget {
   }
 }
 
-class ChatBotPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة شات بوت", style: TextStyle(fontSize: 24)));
-  }
-}
 
-class AskYourMPPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة اسأل نائبك", style: TextStyle(fontSize: 24)));
-  }
-}
 
-class SettingsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("صفحة الإعدادات", style: TextStyle(fontSize: 24)));
-  }
-}
+
+
+
 
 

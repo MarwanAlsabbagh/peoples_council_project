@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../utils/media_utils.dart';
+
 class PartiesCard extends StatelessWidget {
   final String name;
   final String governorate;
@@ -35,7 +37,7 @@ class PartiesCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              imagePath,
+              getFullMediaUrl(imagePath),
               width: 90,
               height: 90,
               fit: BoxFit.cover,

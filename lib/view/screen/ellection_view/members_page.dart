@@ -4,6 +4,7 @@ import '../../../controller/ellection_controller/member_controller.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/member_card.dart';
 import 'candidates_personal_page.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 class MembersPage extends StatelessWidget {
   const MembersPage({super.key});
@@ -39,7 +40,7 @@ class MembersPage extends StatelessWidget {
                   textAlign: TextAlign.right,
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
-                    hintText: "ابحث عن ما تريد...",
+                    hintText: easy.tr("search_hint"),
                     prefixIcon: const Icon(Icons.search, color: Colors.green),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.0),
@@ -59,14 +60,16 @@ class MembersPage extends StatelessWidget {
                       final member = controller.filteredMembers[index];
                       return GestureDetector(
                         onTap: () {
-                          Get.to(() => CandidatesPersonalPage(
+                          /*Get.to(() => CandidatesPersonalPage(
                             id: member.id,
                             name: member.name,
                             governorate: member.governorate??"",
                             party: member.partyName ??"",
                             imagePath: member.imagePath??"",
                             partyLogoPath: member.partyLogoPath??"",
-                          ));
+                          ));*/
+                          Get.to(() => CandidatesPersonalPage(id: member.id));
+
                         },
                         child: MemberCard(
                           name: member.name ?? '',

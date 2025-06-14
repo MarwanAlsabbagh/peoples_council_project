@@ -4,10 +4,11 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../models/deputy_model/post_create_model.dart';
 import '../../repository/deputy_repository/post_repository.dart';
+import 'deputy_home_controller.dart';
 
 class PostController extends GetxController {
   final content = ''.obs;
-  final pickedMedia = Rxn<XFile>(); // صورة أو فيديو
+  final pickedMedia = Rxn<XFile>();
   final isLoading = false.obs;
 
   final formKey = GlobalKey<FormState>();
@@ -47,14 +48,18 @@ class PostController extends GetxController {
     );
 
     try {
-      await _repository.createPost(model);
-      Get.back(result: true);
+      final newPost = await _repository.createPost(model);
+      final deputyHomeController = Get.find<DeputyHomeController>();
+      deputyHomeController.addNewPost(newPost);
+
+      Get.back(result: newPost.toJson());
     } catch (e) {
       Get.snackbar('خطأ', 'فشل في إرسال المنشور');
     } finally {
       isLoading.value = false;
     }
   }
+
   void reset() {
     content.value = '';
     pickedMedia.value = null;

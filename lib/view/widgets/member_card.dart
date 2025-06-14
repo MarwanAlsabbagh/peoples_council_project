@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/media_utils.dart';
+
 class MemberCard extends StatelessWidget {
   final String name;
   final String? governorate;
@@ -39,7 +41,7 @@ class MemberCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                imagePath!,
+                getFullMediaUrl(imagePath),
                 width: double.infinity,
                 height: 100,
                 fit: BoxFit.cover,
@@ -78,8 +80,8 @@ class MemberCard extends StatelessWidget {
                         style: TextStyle(fontSize: 14, color: Color(0xff2E8F5A)),
                       ),
                       const SizedBox(width: 6),
-                      Image.asset(
-                        partyLogoPath!,
+                      Image.network(
+                        getFullMediaUrl(partyLogoPath),
                         width: 20,
                         height: 20,
                       ),

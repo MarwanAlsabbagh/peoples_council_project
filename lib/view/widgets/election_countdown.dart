@@ -18,7 +18,7 @@ class ElectionCountdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xffF7F7F8),
+        color: const Color(0xffF7F7F8),
         borderRadius: BorderRadius.circular(12),
       ),
       width: double.infinity,
@@ -29,26 +29,28 @@ class ElectionCountdown extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "الوقت المتبقي للانتخابات :",
-                    style: TextStyle(
-                      color: Color(0xff2E8F5A),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "الوقت المتبقي للانتخابات :",
+                      style: TextStyle(
+                        color: Color(0xff2E8F5A),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    "الإنتخابات العامة لمجلس الشعب الدورة التشريعية 2024",
-                    style: TextStyle(
-                      color: Color(0xff000401),
-                      fontSize: 14,
+                    SizedBox(height: 4),
+                    Text(
+                      "الإنتخابات العامة لمجلس الشعب الدورة التشريعية 2024",
+                      style: TextStyle(
+                        color: Color(0xff000401),
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Image.asset(
                 "assets/syria-logo-png_seeklogo-613100 1.png",
@@ -57,9 +59,9 @@ class ElectionCountdown extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildTimeBox(days, "الأيام"),
               _buildTimeBox(hours, "الساعات"),
@@ -77,29 +79,28 @@ class ElectionCountdown extends StatelessWidget {
       child: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: Color(0x1A2E8F5A),
+          color: const Color(0x1A2E8F5A),
           border: Border.all(
-            color: Color(0xFF2E8F5A),
+            color: const Color(0xFF2E8F5A),
             width: 2.0,
           ),
           borderRadius: BorderRadius.circular(10),
         ),
-        margin: EdgeInsets.symmetric(horizontal: 4),
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4), // قلل الهامش
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               value,
-              style: TextStyle(
-                fontSize: 18,
+              style: const TextStyle(
+                fontSize: 16,
                 fontWeight: FontWeight.w400,
                 color: Colors.black,
               ),
             ),
             Text(
               label,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
           ],
         ),

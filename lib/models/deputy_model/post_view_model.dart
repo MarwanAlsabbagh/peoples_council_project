@@ -1,55 +1,67 @@
 class PostViewModel {
   final int id;
   final String? mediaType;
-  final String? mediaUrl;
+  final String? mediaPath;
   final String? content;
-  final int? likesCount;
-  final int? dislikesCount;
-  final List<dynamic> comments;
+  final int likes;
+  final int dislikes;
+  final int commentsCount;
 
-  // الخصائص الجديدة
   final String? userImage;
   final String? userName;
   final DateTime? createdAt;
-  final List<String> images;
 
   PostViewModel({
     required this.id,
     this.mediaType,
-    this.mediaUrl,
+    this.mediaPath,
     this.content,
-    this.likesCount,
-    this.dislikesCount,
-    required this.comments,
+    this.likes = 0,
+    this.dislikes = 0,
+    this.commentsCount = 0,
     this.userImage,
     this.userName,
     this.createdAt,
-    this.images = const [],
   });
-
-  String get createdAtFormatted {
-    if (createdAt == null) return 'منذ قليل';
-    final difference = DateTime.now().difference(createdAt!);
-    if (difference.inMinutes < 1) return 'الآن';
-    if (difference.inHours < 1) return '${difference.inMinutes} دقيقة';
-    if (difference.inDays < 1) return '${difference.inHours} ساعة';
-    return '${difference.inDays} يوم';
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'media_type': mediaType,
+      'media_path': mediaPath?.replaceFirst('storage/', ''),
+      'content': content,
+      'likes': likes,
+      'dislikes': dislikes,
+      'comments_count': commentsCount,
+      'owner_image': userImage,
+      'owner_name': userName,
+      'created_at': createdAt?.toIso8601String(),
+    };
   }
 
+  String get createdAtFormatted {
+    if (createdAt == null) return '';
+    return "${createdAt!.year}-${createdAt!.month.toString().padLeft(2, '0')}-${createdAt!.day.toString().padLeft(2, '0')} "
+        "${createdAt!.hour.toString().padLeft(2, '0')}:${createdAt!.minute.toString().padLeft(2, '0')}";
+  }
   factory PostViewModel.fromJson(Map<String, dynamic> json) {
     return PostViewModel(
       id: json['id'] ?? 0,
       mediaType: json['media_type'],
-      mediaUrl: json['media_url'],
+      mediaPath: _normalizePath("storage/${json['media_path']}"),
       content: json['content'],
-      likesCount: json['likes_count'] ?? 0,
-      dislikesCount: json['dislikes_count'] ?? 0,
-      comments: json['comments'] ?? [],
-      userImage: json['user'] != null ? json['user']['image'] : null,
-      userName: json['user'] != null ? json['user']['name'] : null,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
-      images: (json['images'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      likes: json['likes'] ?? 0,
+      dislikes: json['dislikes'] ?? 0,
+      commentsCount: json['comments_count'] ?? 0,
+      userImage: _normalizePath(json['owner_image']),
+      userName: json['owner_name'] ?? '',
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'])
+          : null,
     );
+  }
+  static String? _normalizePath(String? path) {
+    if (path == null || path.isEmpty) return null;
+    return path.startsWith('/') ? path : path;
   }
 
 }

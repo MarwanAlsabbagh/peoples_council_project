@@ -1,11 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:dio/dio.dart' as dio; // ❌ لا حاجة لها مؤقتاً إن لم تستخدم OCR
-// import 'package:path/path.dart';       // ❌ مستخدم فقط في OCR
 
 import '../models/register_model.dart';
 import '../repository/rigister_reposetory.dart';
+import '../view/screen/login_page.dart';
 
 class RegisterController extends GetxController {
   final firstNameController = TextEditingController();
@@ -18,12 +18,19 @@ class RegisterController extends GetxController {
 
   var selectedCity = ''.obs;
   var selectedGender = ''.obs;
+  var isLoading = false.obs;
 
   var avatar = Rxn<XFile>();
   var frontId = Rxn<XFile>();
   var backId = Rxn<XFile>();
 
-  final RegisterRepository _repo = RegisterRepository();
+  final RegisterRepository _repo = Get.find<RegisterRepository>();
+
+  String getMappedSex(String genderInArabic) {
+    if (genderInArabic == 'ذكر') return 'male';
+    if (genderInArabic == 'أنثى') return 'female';
+    return 'unknown';
+  }
 
   void pickAvatar({required ImageSource source}) async {
     final picker = ImagePicker();
@@ -43,81 +50,58 @@ class RegisterController extends GetxController {
     if (pickedFile != null) backId.value = pickedFile;
   }
 
-  // ---------------------------- OCR METHOD (DISABLED) ----------------------------
-
-  // Future<String?> extractIdFromBackId(XFile backIdImage) async {
-  //   final dio.Dio dioClient = dio.Dio();
-
-  //   try {
-  //     final formData = dio.FormData.fromMap({
-  //       'image': await dio.MultipartFile.fromFile(
-  //         backIdImage.path,
-  //         filename: basename(backIdImage.path),
-  //       ),
-  //     });
-
-  //     final response = await dioClient.post(
-  //       'http://127.0.0.1:5000/ocr', // استبدل هذا بالرابط الصحيح
-  //       data: formData,
-  //       options: dio.Options(
-  //         headers: {'Content-Type': 'multipart/form-data'},
-  //       ),
-  //     );
-
-  //     if (response.statusCode == 200 && response.data['text'] != null) {
-  //       List textList = response.data['text'];
-  //       final idRegExp = RegExp(r'\d{9}');
-  //       for (var line in textList) {
-  //         final match = idRegExp.firstMatch(line);
-  //         if (match != null) {
-  //           return match.group(0); // الرقم الوطني
-  //         }
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("OCR error: $e");
-  //     Get.snackbar("خطأ", "فشل في قراءة صورة الهوية");
-  //   }
-
-  //   return null;
-  // }
-
   void register() async {
-    // if (backId.value == null) {
-    //   Get.snackbar("خطأ", "يرجى رفع صورة الهوية الخلفية");
-    //   return;
-    // }
-
-    // final extractedId = await extractIdFromBackId(backId.value!);
-
-    // if (extractedId == null) {
-    //   Get.snackbar("خطأ", "تعذر قراءة الرقم الوطني من صورة الهوية");
-    //   return;
-    // }
-
-    // if (extractedId != nationalIDController.text.trim()) {
-    //   Get.snackbar("خطأ في الرقم الوطني", "الرقم الوطني لا يطابق الصورة");
-    //   return;
-    // }
+    if (passwordController.text != confirmPasswordController.text) {
+      Get.snackbar("خطأ", "كلمة المرور وتأكيدها غير متطابقين");
+      return;
+    }
 
     final request = RegisterRequestModel(
-      name: firstNameController.text,
-      email: emailController.text,
+      name: firstNameController.text.trim(),
+      email: emailController.text.trim(),
       password: passwordController.text,
-      phone: phoneController.text,
+      phone: phoneController.text.trim(),
       sex: selectedGender.value,
-      idNumber: nationalIDController.text,
+      idNumber: nationalIDController.text.trim(),
       governorate: selectedCity.value,
-      city: locationCityController.text,
+      city: locationCityController.text.trim(),
       avatar: avatar.value,
       frontId: frontId.value,
       backId: backId.value,
     );
 
-    final res = await _repo.register(request);
-    res.fold(
-          (error) => Get.snackbar("فشل التسجيل", error.toString()),
-          (success) => Get.snackbar("تم التسجيل", success),
-    );
+    try {
+      final response = await _repo.registerUser(request);
+
+      if (response.statusCode == 200 && response.data['status'] == true) {
+        Get.snackbar("نجاح", response.data['message'] ?? "تم التسجيل بنجاح");
+        clearForm();
+        Future.delayed(Duration(milliseconds: 500), () {
+          Get.off(() => LoginPage());
+        });
+      } else {
+        Get.snackbar("خطأ", response.data['message'] ?? "فشل التسجيل");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        print("Response error body: ${e.response!.data}");
+      }
+      Get.snackbar("خطأ في الاتصال", e.toString());
+    }
   }
+  void clearForm() {
+    firstNameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    nationalIDController.clear();
+    phoneController.clear();
+    locationCityController.clear();
+    selectedCity.value = '';
+    selectedGender.value = '';
+    avatar.value = null;
+    frontId.value = null;
+    backId.value = null;
+  }
+
 }

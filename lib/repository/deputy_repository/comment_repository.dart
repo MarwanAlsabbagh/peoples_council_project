@@ -9,12 +9,12 @@ class CommentRepository {
   CommentRepository({required this.apiService});
 
   Future<List<CommentModel>> fetchComments(int postId) async {
-    final response = await apiService.get('/posts/$postId/comments');
+    final response = await apiService.get('/posts/$postId/comment');
     final data = response.data as List;
     return data.map((json) => CommentModel.fromJson(json)).toList();
   }
 
   Future<void> addComment(int postId, String commentText) async {
-    await apiService.post('/posts/$postId/comments', data: {'text': commentText});
+    await apiService.post('/posts/$postId/comment', data: {'comment': commentText});
   }
 }

@@ -1,26 +1,19 @@
+import 'package:final_senior_project/view/screen/ellection_view/pdf_viewer_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../controller/ellection_controller/cardidates_personal_controller.dart';
+import '../../../utils/media_utils.dart';
 import '../../widgets/video_palyer_widget.dart';
 
 class CandidatesPersonalPage extends StatelessWidget {
-  final String name;
-  final String governorate;
-  final String party;
-  final String imagePath;
-  final String partyLogoPath;
   final int id;
 
   const CandidatesPersonalPage({
     super.key,
-    required this.name,
-    required this.governorate,
-    required this.party,
-    required this.imagePath,
-    required this.partyLogoPath,
     required this.id,
   });
 
@@ -33,9 +26,9 @@ class CandidatesPersonalPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.white,
         toolbarHeight: 60,
-        title: const Text(
-          "التفاصيل",
-          style: TextStyle(
+        title: Text(
+          easy.tr("details_title"),
+          style: const TextStyle(
             fontSize: 22,
             color: Color(0xff000401),
             fontWeight: FontWeight.bold,
@@ -55,116 +48,147 @@ class CandidatesPersonalPage extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: Column(
           children: <Widget>[
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: double.infinity,
+            Obx(() {
+              if (controller.isLoading.value) {
+                return const SizedBox(
                   height: 180,
-                  color: const Color(0xFF2E8F5A),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/syria-logo-png_seeklogo-613100 1.png',
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        "سوريا نحو الأمل",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  right: 16,
-                  top: 130,
-                  child: ClipOval(
-                    child: Image.asset(
-                      imagePath,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (controller.errorMessage.isNotEmpty) {
+                return SizedBox(
+                  height: 180,
+                  child: Center(child: Text(controller.errorMessage.value)),
+                );
+              }
+              if (controller.candidate.value == null) {
+                return SizedBox(
+                  height: 180,
+                  child: Center(child: Text(easy.tr('no_data'))),
+                );
+              }
+
+              final candidate = controller.candidate.value!;
+              final party = candidate.party;
+
+              return Stack(
+                clipBehavior: Clip.none,
                 children: [
-/*
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child:Obx(() {
-                      return GestureDetector(
-                        onTap: () {
-                          controller.toggleFollow();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: const Color(0xFF2E8F5A)),
-                            borderRadius: BorderRadius.circular(12),
+                  Container(
+                    width: double.infinity,
+                    height: 180,
+                    color: const Color(0xFF2E8F5A),
+                    child: Stack(
+                      children: [
+                        // صورة الخلفية في الأسفل
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Image.asset(
+                            'assets/Vector (5).png',
+                            fit: BoxFit.cover,
+                            height: 120,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ),
+
+                        // المحتوى الأساسي فوق الصورة
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                controller.isFollowed.value ? Icons.check : Icons.add,
-                                color: Color(0xFF2E8F5A),
+                              Image.asset(
+                                'assets/syria-logo-png_seeklogo-613100 1.png',
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(height: 8),
                               Text(
-                                controller.isFollowed.value ? 'متابع' : 'متابعة',
+                                easy.tr("syria_towards_hope"),
                                 style: const TextStyle(
-                                  color: Color(0xFF2E8F5A),
+                                  fontSize: 18,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      );
-                    }),
+                      ],
+                    ),
                   ),
-*/
-                  Text(
-                    name,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Text("المحافظة: ", style: TextStyle(color: Color(0xff2E8F5A))),
-                      Text(governorate),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Text("الحزب: ", style: TextStyle(color: Color(0xff2E8F5A))),
-                      Image.asset(partyLogoPath, width: 20),
-                      const SizedBox(width: 4),
-                      Text(party),
-                    ],
+
+                  Positioned(
+                    right: 16,
+                    top: 130,
+                    child: ClipOval(
+                      child: candidate.imagePath.startsWith('http')
+                          ? Image.network(
+                        candidate.imagePath,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      )
+                          : Image.asset(
+                        candidate.imagePath,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ],
-              ),
-            ),
+              );
+            }),
+            const SizedBox(height: 60),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Obx(() {
+                final candidate = controller.candidate.value;
+                if (candidate == null) {
+                  return Container();
+                }
+                final party = candidate.party;
 
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      candidate.name,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(easy.tr("governorate"), style: const TextStyle(color: Color(0xff2E8F5A))),
+                        const SizedBox(width: 6),
+                        Text(candidate.party?.city ?? ''),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(easy.tr("party"), style: const TextStyle(color: Color(0xff2E8F5A))),
+                        const SizedBox(width: 6),
+                        if (party != null)
+                          party.imageUrl.startsWith('http')
+                              ? Image.network(
+                            party.imageUrl,
+                            width: 20,
+                          )
+                              : Image.asset(
+                            party.imageUrl,
+                            width: 20,
+                          ),
+                        const SizedBox(width: 4),
+                        Text(party?.name ?? ''),
+                      ],
+                    ),
+                  ],
+                );
+              }),
+            ),
             const SizedBox(height: 10),
             Obx(() {
               return Container(
@@ -174,14 +198,14 @@ class CandidatesPersonalPage extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          controller.selectedButton.value = 'حول المرشح';
+                          controller.selectedButton.value = 'about_candidate';
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: controller.selectedButton.value == 'حول المرشح'
+                                color: controller.selectedButton.value == 'about_candidate'
                                     ? const Color(0xff2E8F5A)
                                     : Colors.transparent,
                                 width: 3,
@@ -189,10 +213,10 @@ class CandidatesPersonalPage extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            "حول المرشح",
+                            easy.tr('about_candidate'),
                             style: TextStyle(
                               fontSize: 16,
-                              color: controller.selectedButton.value == 'حول المرشح'
+                              color: controller.selectedButton.value == 'about_candidate'
                                   ? const Color(0xff2E8F5A)
                                   : Colors.black,
                             ),
@@ -204,14 +228,14 @@ class CandidatesPersonalPage extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          controller.selectedButton.value = 'البرنامج الانتخابي';
+                          controller.selectedButton.value = 'election_program';
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: controller.selectedButton.value == 'البرنامج الانتخابي'
+                                color: controller.selectedButton.value == 'election_program'
                                     ? const Color(0xff2E8F5A)
                                     : Colors.transparent,
                                 width: 3,
@@ -219,10 +243,10 @@ class CandidatesPersonalPage extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            "البرنامج الانتخابي",
+                            easy.tr('election_program'),
                             style: TextStyle(
                               fontSize: 16,
-                              color: controller.selectedButton.value == 'البرنامج الانتخابي'
+                              color: controller.selectedButton.value == 'election_program'
                                   ? const Color(0xff2E8F5A)
                                   : Colors.black,
                             ),
@@ -238,30 +262,50 @@ class CandidatesPersonalPage extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: SingleChildScrollView(
-                  child: Obx(() {
-                    return controller.selectedButton.value == 'حول المرشح'
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (controller.errorMessage.isNotEmpty) {
+                    return Center(child: Text(controller.errorMessage.value));
+                  }
+
+                  if (controller.candidate.value == null) {
+                    return Center(child: Text(easy.tr('no_data')));
+                  }
+
+                  final candidate = controller.candidate.value!;
+
+                  return SingleChildScrollView(
+                    child: controller.selectedButton.value == 'about_candidate'
                         ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "معلومات عن المرشح:",
-                          style: TextStyle(
+                        Text(
+                          easy.tr("candidate_info"),
+                          style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Color(0xff2E8F5A)),
                         ),
                         const SizedBox(height: 8),
-                        Text("تاريخ الميلاد: ${controller.candidate.value?.birthDate ?? ''}",
-                            style: const TextStyle(fontSize: 16)),
-                        Text("مكان الولادة: ${controller.candidate.value?.birthPlace ?? ''}",
-                            style: const TextStyle(fontSize: 16)),
-                        Text("المؤهل العلمي: ${controller.candidate.value?.education ?? ''}",
-                            style: const TextStyle(fontSize: 16)),
+                        Text(
+                          "${easy.tr("birth_date")}: ${candidate.birthDate}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          "${easy.tr("birth_place")}: ${candidate.birthPlace}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          "${easy.tr("education")}: ${candidate.education}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
                         const SizedBox(height: 10),
-                        const Text(
-                          "فيديوهات:",
-                          style: TextStyle(
+                        Text(
+                          easy.tr("videos"),
+                          style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Color(0xff2E8F5A)),
@@ -271,20 +315,20 @@ class CandidatesPersonalPage extends StatelessWidget {
                           height: 200,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: controller.candidate.value?.videoUrls.length ?? 0,
+                            itemCount: candidate.videoUrls.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: VideoPlayerWidget(
-                                    videoUrl: controller.candidate.value?.videoUrls[index] ?? ''),
+                                    videoRelativePath: candidate.videoUrls[index]),
                               );
                             },
                           ),
                         ),
                         const SizedBox(height: 10),
-                        const Text(
-                          "مقالات:",
-                          style: TextStyle(
+                        Text(
+                          easy.tr("articles"),
+                          style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Color(0xff2E8F5A)),
@@ -294,77 +338,87 @@ class CandidatesPersonalPage extends StatelessWidget {
                           height: 220,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: controller.candidate.value?.articles.length ?? 0,
+                            itemCount: candidate.articles.length,
                             itemBuilder: (context, index) {
-                              final article = controller.candidate.value?.articles[index];
+                              final article = candidate.articles[index];
+
                               return Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Container(
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PdfViewerPage(pdfUrl: article.pdfPath),
                                       ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset(
-                                        article?.image ?? "",
-                                        width: 180,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(article?.title ?? "",
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold)),
-                                            const SizedBox(height: 4),
-                                            Text(article?.date ?? "",
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.grey)),
-                                          ],
+                                    );
+                                  },
+                                  child: Container(
+                                    width: 180,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
                                         ),
-                                      )
-                                    ],
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        article.image.startsWith('http')
+                                            ? Image.network(
+                                          article.image,
+                                          width: 180,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        )
+                                            : Image.asset(
+                                          article.image,
+                                          width: 180,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            article.title,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold, fontSize: 14),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                          child: Text(
+                                            article.date,
+                                            style:
+                                            const TextStyle(color: Colors.grey, fontSize: 12),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
                             },
                           ),
                         )
+
                       ],
                     )
-                        : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:  [
-                        Text(
-                          "البرنامج الانتخابي:",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff2E8F5A)),
-                        ),
-                        SizedBox(height: 8),
-                        //Text(controller.candidate.value?.program ?? 'لا يوجد برنامج'),
-                      ],
-                    );
-                  }),
-                ),
+                        : Text(
+                      candidate.electoralProgram,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  );
+                }),
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:final_senior_project/utils/media_utils.dart';
 import 'package:flutter/material.dart';
 
 class StoryCircle extends StatelessWidget {
@@ -34,7 +35,7 @@ class StoryCircle extends StatelessWidget {
               padding: const EdgeInsets.all(3.0),
               child: CircleAvatar(
                 radius: 32,
-                backgroundImage: NetworkImage(imagePath),
+                backgroundImage: NetworkImage(getFullMediaUrl(imagePath)),
               ),
             ),
           ),

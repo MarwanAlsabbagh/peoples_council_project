@@ -7,6 +7,13 @@ class DeputyProfileRepository {
 
   Future<DeputyProfileModel> fetchDeputyProfile() async {
     final response = await _apiService.get('/candidate-profile',withToken: true);
+
+    print("🔥🔥🔥 START DeputyProfile API DATA 🔥🔥🔥");
+    print("Status Code: ${response.statusCode}");
+    print("Response Full: ${response.toString()}");
+    print("Response Data: ${response.data}");
+    print("🔥🔥🔥 END DeputyProfile API DATA 🔥🔥🔥");
+
     final Map<String, dynamic> data = response.data;
     return DeputyProfileModel.fromJson(data);
   }

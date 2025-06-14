@@ -9,8 +9,10 @@ import '../../service/api_service.dart';
 class DeputyBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => ApiService());
-    Get.lazyPut(() => DeputyHomeRepository(apiService: Get.find()));
-    Get.lazyPut(() => DeputyHomeController(repository: Get.find()));
+    Get.put(ApiService());
+    Get.put(DeputyHomeRepository());
+    Get.put(DeputyHomeController());
+
+
   }
 }

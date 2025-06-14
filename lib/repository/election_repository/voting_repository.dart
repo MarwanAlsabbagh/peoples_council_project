@@ -1,10 +1,7 @@
-
 import 'dart:io';
 
+import 'package:get/get.dart';
 import 'package:dio/dio.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/get_instance.dart';
-import 'package:get/state_manager.dart';
 
 import '../../models/ellection_model/votting_model.dart';
 import '../../service/api_service.dart';
@@ -13,21 +10,22 @@ class VotingRepository extends GetxService {
   final ApiService apiService = Get.find<ApiService>();
 
   Future<List<Votting>> fetchCandidates() async {
-    final response = await apiService.get('/candidates');
-    return (response.data as List).map((json) => Votting.fromJson(json)).toList();
+    final response = await apiService.get('/getCandidates',withToken: false);
+    print("Response from /getCandidates: ${response.data}");
+
+    final List data = response.data['candidates'];
+
+    return data.map((item) => Votting.fromJson(item)).toList();
   }
 
+  // نوقف التحقق بالوجه مؤقتاً
   Future<bool> verifyFace(File imageFile) async {
-    final formData = FormData.fromMap({
-      'image': await MultipartFile.fromFile(imageFile.path, filename: 'face.jpg'),
-    });
-
-    final response = await apiService.postMultipart('/face-verification', formData);
-    return response.data['verified'] == true;
+    // return true; // ممكن تفعيل التعليق لتجاوز التحقق
+    throw UnimplementedError('Face verification is disabled.');
   }
 
-  Future<bool> submitVote(String candidateName) async {
-    final response = await apiService.post('/vote', data: {'candidate_name': candidateName});
+  Future<bool> submitVote(int candidateId) async {
+    final response = await apiService.post('/vote', data: {'candidate_id': candidateId});
     return response.statusCode == 200;
   }
 }

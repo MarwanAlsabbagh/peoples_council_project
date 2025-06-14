@@ -1,30 +1,31 @@
-import 'package:dio/dio.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:get_storage/get_storage.dart';
+import 'package:get/get.dart';
 
 class ApiService extends GetxService {
-  final Dio dio = Dio(
-    BaseOptions(
-      baseUrl: 'http://192.168.1.108:8000/api',
+  final dio.Dio dioClient = dio.Dio(
+    dio.BaseOptions(
+      baseUrl: 'http://192.168.130.213:8000/api',
       connectTimeout: Duration(milliseconds: 10000),
       receiveTimeout: Duration(milliseconds: 10000),
-      headers: {'Content-Type': 'application/json'},
     ),
   );
 
   final box = GetStorage();
 
   ApiService() {
-    dio.interceptors.add(InterceptorsWrapper(
+    dioClient.interceptors.add(dio.InterceptorsWrapper(
       onRequest: (options, handler) {
         print('Request: ${options.method} ${options.uri}');
+        print('Headers: ${options.headers}');
+        print('Data: ${options.data}');
         return handler.next(options);
       },
       onResponse: (response, handler) {
         print('Response: ${response.statusCode} ${response.data}');
         return handler.next(response);
       },
-      onError: (DioException error, handler) {
+      onError: (dio.DioException error, handler) {
         print('Error: ${error.message}');
         return handler.next(error);
       },
@@ -32,7 +33,7 @@ class ApiService extends GetxService {
   }
 
   Map<String, String> _buildHeaders({bool withToken = true}) {
-    final headers = {'Content-Type': 'application/json'};
+    final headers = <String, String>{};
     if (withToken) {
       final token = box.read('token');
       if (token != null) {
@@ -42,13 +43,13 @@ class ApiService extends GetxService {
     return headers;
   }
 
-  Future<Response> get(String path,
+  Future<dio.Response> get(String path,
       {Map<String, dynamic>? queryParameters, bool withToken = true}) async {
     try {
-      final response = await dio.get(
+      final response = await dioClient.get(
         path,
         queryParameters: queryParameters,
-        options: Options(headers: _buildHeaders(withToken: withToken)),
+        options: dio.Options(headers: _buildHeaders(withToken: withToken)),
       );
       return response;
     } catch (e) {
@@ -56,13 +57,13 @@ class ApiService extends GetxService {
     }
   }
 
-  Future<Response> post(String path,
+  Future<dio.Response> post(String path,
       {dynamic data, bool withToken = true}) async {
     try {
-      final response = await dio.post(
+      final response = await dioClient.post(
         path,
         data: data,
-        options: Options(headers: _buildHeaders(withToken: withToken)),
+        options: dio.Options(headers: _buildHeaders(withToken: withToken)),
       );
       return response;
     } catch (e) {
@@ -70,13 +71,13 @@ class ApiService extends GetxService {
     }
   }
 
-  Future<Response> put(String path,
+  Future<dio.Response> put(String path,
       {dynamic data, bool withToken = true}) async {
     try {
-      final response = await dio.put(
+      final response = await dioClient.put(
         path,
         data: data,
-        options: Options(headers: _buildHeaders(withToken: withToken)),
+        options: dio.Options(headers: _buildHeaders(withToken: withToken)),
       );
       return response;
     } catch (e) {
@@ -84,11 +85,11 @@ class ApiService extends GetxService {
     }
   }
 
-  Future<Response> delete(String path, {bool withToken = true}) async {
+  Future<dio.Response> delete(String path, {bool withToken = true}) async {
     try {
-      final response = await dio.delete(
+      final response = await dioClient.delete(
         path,
-        options: Options(headers: _buildHeaders(withToken: withToken)),
+        options: dio.Options(headers: _buildHeaders(withToken: withToken)),
       );
       return response;
     } catch (e) {
@@ -96,25 +97,25 @@ class ApiService extends GetxService {
     }
   }
 
-  Future<Response> postMultipart(String path, FormData formData,
+  Future<dio.Response> postMultipart(String path, dio.FormData formData,
       {bool withToken = true}) async {
     try {
       final headers = _buildHeaders(withToken: withToken);
-      headers['Content-Type'] = 'multipart/form-data';
+      // لا تضيف Content-Type يدويًا هنا، ديو يقوم بذلك تلقائيًا
 
-      final response = await dio.post(
+      final response = await dioClient.post(
         path,
         data: formData,
-        options: Options(headers: headers),
+        options: dio.Options(headers: headers),
       );
       return response;
     } catch (e) {
+      print("Dio error in postMultipart: $e");
       throw handleError(e);
     }
   }
-
   dynamic handleError(dynamic error) {
-    if (error is DioException) {
+    if (error is dio.DioException) {
       switch (error.response?.statusCode) {
         case 400:
           throw Exception('Bad Request');

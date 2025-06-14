@@ -16,16 +16,16 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   bool liked = false;
   bool disliked = false;
-  int likeCount = 0;
-  int dislikeCount = 0;
-  int commentCount = 0;
+  late int likeCount;
+  late int dislikeCount;
+  late int commentCount;
 
   @override
   void initState() {
     super.initState();
-    likeCount = widget.post.likesCount ?? 0;
-    dislikeCount = widget.post.dislikesCount ?? 0;
-    commentCount = widget.post.comments.length;
+    likeCount = widget.post.likes;
+    dislikeCount = widget.post.dislikes;
+    commentCount = widget.post.commentsCount;
   }
 
   @override
@@ -79,9 +79,8 @@ class _PostWidgetState extends State<PostWidget> {
   Widget _buildPostContent() {
     final hasText = widget.post.content != null && widget.post.content!.trim().isNotEmpty;
     final mediaType = widget.post.mediaType;
-    final mediaUrl = widget.post.mediaUrl;
+    final mediaUrl = getFullMediaUrl(widget.post.mediaPath);
 
-    // نص فقط
     if (hasText && mediaType == null) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -89,17 +88,14 @@ class _PostWidgetState extends State<PostWidget> {
       );
     }
 
-    // صورة فقط
     if (!hasText && mediaType == 'image') {
       return _buildImage(mediaUrl);
     }
 
-    // فيديو فقط
     if (!hasText && mediaType == 'video') {
       return _buildVideo(mediaUrl);
     }
 
-    // نص + صورة
     if (hasText && mediaType == 'image') {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +110,6 @@ class _PostWidgetState extends State<PostWidget> {
       );
     }
 
-    // نص + فيديو
     if (hasText && mediaType == 'video') {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +124,6 @@ class _PostWidgetState extends State<PostWidget> {
       );
     }
 
-    // fallback في حالة عدم وجود شيء واضح
     return const SizedBox.shrink();
   }
 
@@ -139,7 +133,7 @@ class _PostWidgetState extends State<PostWidget> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Image.network(
-        getFullMediaUrl(url),
+        url,
         width: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
@@ -152,7 +146,7 @@ class _PostWidgetState extends State<PostWidget> {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: VideoPlayerWidget(videoUrl: getFullMediaUrl(url)),
+      child: VideoPlayerWidget(videoRelativePath: url),
     );
   }
 

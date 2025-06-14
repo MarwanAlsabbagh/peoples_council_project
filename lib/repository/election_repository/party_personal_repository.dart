@@ -8,20 +8,10 @@ class PartyRepository extends GetxService {
 
   Future<PartyPersonalModel> fetchPartyDetails(int id) async {
     try {
-      final response = await apiService.get('/party_info/$id');
-      return PartyPersonalModel.fromJson(response.data);
+      final response = await apiService.get('/parties/$id/candidates');
+      return PartyPersonalModel.fromNewApi(response.data);
     } catch (e) {
       throw Exception('فشل في جلب بيانات الحزب: $e');
-    }
-  }
-
-  Future<List<MemberModel>> fetchPartyMembers(int partyId) async {
-    try {
-      final response = await apiService.get('/party_members/$partyId');
-      final List data = response.data as List;
-      return data.map((e) => MemberModel.fromJson(e)).toList();
-    } catch (e) {
-      throw Exception('فشل في جلب بيانات الأعضاء: $e');
     }
   }
 

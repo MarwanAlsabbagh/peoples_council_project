@@ -1,10 +1,15 @@
+import 'package:easy_localization/easy_localization.dart' as easy;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../controller/deputy_controller/deputy_profile_controller.dart';
 import '../../../controller/deputy_controller/post_controller.dart';
 import '../../../models/deputy_model/deputy_profile_model.dart';
 import '../../../models/deputy_model/post_view_model.dart';
+import '../../../models/deputy_model/profile_post_model.dart';
+import '../../../utils/media_utils.dart';
 import '../../widgets/post_widget.dart';
+import '../../widgets/post_widget_profile.dart';
 import 'add_post_screen.dart';
 
 class DeputyProfilePage extends StatelessWidget {
@@ -14,14 +19,11 @@ class DeputyProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
-      appBar: AppBar(),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-
         final user = controller.user.value;
-
         return SingleChildScrollView(
           child: Directionality(
             textDirection: TextDirection.rtl,
@@ -78,16 +80,20 @@ class DeputyProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _StatItem(label: 'المنشورات', count: user.postsCount),
+                    _StatItem(
+                        label: easy.tr('profile_posts'),
+                        count: user.postsCount),
                     const SizedBox(width: 20),
-                    _StatItem(label: 'الإعجابات', count: user.totalLikes),
+                    _StatItem(
+                        label: easy.tr('profile_likes'),
+                        count: user.totalLikes),
                     const SizedBox(width: 20),
-                   // _StatItem(label: 'المتابعين', count: user.followers),
+                    // _StatItem(label: 'المتابعين', count: user.followers),
                   ],
                 ),
                 const SizedBox(height: 16),
                 ...controller.posts
-                    .map((post) => PostWidget(post: post))
+                    .map((post) => PostWidgetProfile (post: post))
                     .toList(),
               ],
             ),
@@ -96,8 +102,8 @@ class DeputyProfilePage extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final postController = Get.find<PostController>();  // تأكد إنك بتستخدم نفس الـ Controller
-          postController.reset();  // فرّغ بيانات المنشور القديم
+          final postController = Get.find<PostController>();
+          postController.reset();
 
           final result = await Navigator.push(
             context,
@@ -105,14 +111,14 @@ class DeputyProfilePage extends StatelessWidget {
           );
 
           if (result != null && result is Map<String, dynamic>) {
-            final newPost = PostViewModel.fromJson(result);
+            final newPost = ProfilePostModel.fromJson(result);
             controller.addNewPost(newPost);
           }
+
         },
         backgroundColor: const Color(0xFF2E8F5A),
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add,color: Colors.white,),
       ),
-
     );
   }
 
@@ -133,8 +139,8 @@ class DeputyProfilePage extends StatelessWidget {
               Image.asset('assets/syria-logo-png_seeklogo-613100 1.png',
                   width: 60, height: 60),
               const SizedBox(height: 8),
-              const Text(
-                "سوريا نحو الأمل",
+              Text(
+                easy.tr("syria_towards_hope"),
                 style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,
@@ -148,7 +154,9 @@ class DeputyProfilePage extends StatelessWidget {
           right: 6,
           child: CircleAvatar(
             radius: 60,
-            backgroundImage:NetworkImage(user.image),
+            backgroundImage: NetworkImage(
+              getFullMediaUrl(user.image),
+            ),
           ),
         ),
       ],

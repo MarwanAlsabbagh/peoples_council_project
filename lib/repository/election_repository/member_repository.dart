@@ -8,7 +8,6 @@ class MembersRepository extends GetxService {
   Future<List<MemberModel>> fetchMembers() async {
     final response = await apiService.get('/getCandidates',withToken: false);
     print("Response from /getCandidates: ${response.data}");
-
     final List data = response.data['candidates'];
 
     return data.map((item) => MemberModel.fromJson(item)).toList();

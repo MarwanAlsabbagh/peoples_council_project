@@ -3,12 +3,13 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../models/deputy_model/post_create_model.dart';
+import '../../models/deputy_model/post_view_model.dart';
 import '../../service/api_service.dart';
 
 class PostRepository {
   final ApiService _apiService = Get.find<ApiService>();
 
-  Future<void> createPost(PostCreateModel post) async {
+  Future<PostViewModel> createPost(PostCreateModel post) async {
     final formData = dio.FormData();
 
     if (post.content != null && post.content!.isNotEmpty) {
@@ -22,6 +23,10 @@ class PostRepository {
       ));
     }
 
-    await _apiService.postMultipart('/posts', formData);
+    final response = await _apiService.postMultipart('/posts', formData);
+
+    final postJson = response.data['post'] as Map<String, dynamic>;
+
+    return PostViewModel.fromJson(postJson);
   }
 }

@@ -4,7 +4,7 @@ import '../../models/aftter_ellection/chat_message_model.dart';
 
 class ChatRepository {
   final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'https://3046-34-60-185-142.ngrok-free.app',
+    baseUrl: 'https://9a85-34-125-146-33.ngrok-free.app',
     headers: {'Content-Type': 'application/json'},
   ));
 
@@ -23,14 +23,14 @@ class ChatRepository {
 
   Future<ChatMessageModel> sendAudio(File audioFile) async {
     final formData = FormData.fromMap({
-      'audio': await MultipartFile.fromFile(audioFile.path, filename: 'voice.wav'),
+      'audio': await MultipartFile.fromFile(audioFile.path, filename: 'voice.mp3'),
     });
 
-    final response = await _dio.post('/api/ask-with-audio', data: formData);
+    final response = await _dio.post('/transcribe_and_ask', data: formData);
 
     return ChatMessageModel(
-      message: response.data['answer'],
-      question: response.data['question'],
+      message: response.data['legal_answer'],
+      question: response.data['transcription'],
       senderName: 'المساعد',
       senderImage: 'https://i.imgur.com/assistant-avatar.png',
       isMe: false,

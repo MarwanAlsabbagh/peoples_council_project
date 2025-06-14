@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 import '../../../controller/ellection_controller/votting_controller.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/eleveted_button.dart';
 import '../../widgets/search_bar_with_filter.dart';
 import '../../widgets/voting_card.dart';
-import 'face_verification_page.dart';
 
 class VotingPage extends StatelessWidget {
   VotingPage({super.key});
@@ -25,7 +25,7 @@ class VotingPage extends StatelessWidget {
             children: [
               SearchBarWithFilter(
                 controller: searchController,
-                onFilterPressed: () {}, // دالة غير قابلة للnull
+                onFilterPressed: () {},
                 onChanged: (value) => controller.filterCandidates(value),
               ),
               const SizedBox(height: 20),
@@ -37,8 +37,8 @@ class VotingPage extends StatelessWidget {
                 }
 
                 if (controller.filteredCandidates.isEmpty) {
-                  return const Expanded(
-                    child: Center(child: Text('لا يوجد مرشحين متطابقين')),
+                  return  Expanded(
+                    child: Center(child: Text(easy.tr('no_matching_candidates'))),
                   );
                 }
 
@@ -47,24 +47,27 @@ class VotingPage extends StatelessWidget {
                     itemCount: controller.filteredCandidates.length,
                     itemBuilder: (context, index) {
                       final candidate = controller.filteredCandidates[index];
-                      final isSelected = controller.isCandidateSelected(candidate);
 
-                      return VotingCard(
-                        name: candidate.name,
-                        governorate: candidate.governorate,
-                        category: candidate.category,
-                        party: candidate.party,
-                        imagePath: candidate.imagePath,
-                        partyLogoPath: candidate.partyLogoPath,
-                        isSelected: isSelected,
-                        onSelected: (selected) {
-                          if (selected) {
-                            controller.selectCandidate(candidate);
-                          } else {
-                            controller.deselectCandidate();
-                          }
-                        },
-                      );
+                      return Obx(() {
+                        final isSelected = controller.isCandidateSelected(candidate);
+
+                        return VotingCard(
+                          name: candidate.name ?? '',
+                          governorate: candidate.governorate ?? '',
+                          category: candidate.category ?? '',
+                          party: candidate.partyName ?? '',
+                          imagePath: candidate.imagePath ?? '',
+                          partyLogoPath: candidate.partyLogoPath ?? '',
+                          isSelected: isSelected,
+                          onSelected: (selected) {
+                            if (selected) {
+                              controller.selectCandidate(candidate);
+                            } else {
+                              controller.deselectCandidate();
+                            }
+                          },
+                        );
+                      });
                     },
                   ),
                 );
@@ -73,9 +76,21 @@ class VotingPage extends StatelessWidget {
               Obx(() => SizedBox(
                 width: double.infinity,
                 child: ButtonWidget(
-                  text: 'تصويت',
+                  text: easy.tr('vote'),
                   onPressed: controller.selectedCandidate.value != null
-                      ? () => Get.to(() => const FaceVerificationPage())
+                      ? () async {
+                    final success = await controller.submitVote();
+                    Get.snackbar(
+                      success ? easy.tr('vote_success_title') :easy.tr('vote_failure_title'),
+                      success
+                          ?easy.tr('vote_success_message')
+                          :easy.tr('vote_failure_message'),
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                    if (success) {
+                      controller.deselectCandidate();
+                    }
+                  }
                       : null,
                 ),
               )),

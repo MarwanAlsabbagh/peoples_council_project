@@ -4,6 +4,7 @@ import 'package:final_senior_project/view/screen/send_instructions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 import '../../controller/login_controller.dart';
 import '../../utils/globall_color.dart';
@@ -15,7 +16,6 @@ class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
   final LoginController controller = Get.find();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +50,7 @@ class LoginPage extends StatelessWidget {
                                       width: 120,
                                       height: 120,
                                     ),
-                                    Text("مجلس الشعب العربي السوري",
+                                    Text(easy.tr("custom_appbar_title"),
                                       style: TextStyle(
                                         color: GlobalColors.textColor,
                                         fontSize: 20,
@@ -69,7 +69,7 @@ class LoginPage extends StatelessWidget {
                             Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                "سجل دخولك الان",
+                                easy.tr("login_button"),
                                 style: TextStyle(
                                   color: GlobalColors.secondTextColor,
                                   fontSize: 24,
@@ -80,7 +80,7 @@ class LoginPage extends StatelessWidget {
                             SizedBox(height: 20),
                             TextFieldWidget(
                               controller: controller.emailController,
-                              hintText: 'البريد الألكتروني',
+                              hintText: easy.tr('login_email_hint'),
                               prefixIcon: Icons.email_outlined,
                               onTap: () {},
                               readOnly: false,
@@ -88,7 +88,7 @@ class LoginPage extends StatelessWidget {
                             SizedBox(height: 20),
                             TextFieldWidget(
                               controller: controller.passwordController,
-                              hintText: 'كلمة المرور',
+                              hintText: easy.tr('login_password_hint'),
                               prefixIcon: Icons.lock_clock_outlined,
                               obscureText: true,
                               onTap: () {},
@@ -101,7 +101,7 @@ class LoginPage extends StatelessWidget {
                                   Get.to(SendInstructionsView());
                                 },
                                 child: Text(
-                                  'هل نسيت كلمة المرور؟',
+                                  easy.tr('login_forgot_password'),
                                   style: TextStyle(
                                     fontSize: 20,
                                     color: GlobalColors.secondTextColor,
@@ -118,7 +118,7 @@ class LoginPage extends StatelessWidget {
                             Obx(() => controller.isLoading.value
                                 ? CircularProgressIndicator()
                                 : ButtonWidget(
-                              text: 'سجل دخولك',
+                              text: easy.tr('login_button'),
                               onPressed: controller.login,
                             )),
                             SizedBox(height: 20),
@@ -132,7 +132,7 @@ class LoginPage extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "أذا لم يكن لديك حساب؟",
+                                      easy.tr("login_no_account"),
                                       style: TextStyle(
                                           color: GlobalColors.textColor,
                                           fontWeight: FontWeight.w600,
@@ -140,7 +140,7 @@ class LoginPage extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      "أنشاء حساب",
+                                      easy.tr("login_create_account"),
                                       style: TextStyle(
                                           color: GlobalColors.secondTextColor,
                                           fontWeight: FontWeight.w600,

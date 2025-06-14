@@ -42,4 +42,5 @@ class ChatController extends GetxController {
       Get.snackbar("خطأ", "فشل إرسال الصوت");
     }
   }
+
 }
